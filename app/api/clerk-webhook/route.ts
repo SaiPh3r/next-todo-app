@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
-import { connect } from "@/db/db"; 
-import { UserModel } from "@/models/userModel"; 
+import { connect } from "@/db/db";
+import { UserModel } from "@/models/userModel";
 
 export async function POST(req: Request) {
   try {
-    await connect(); 
+    await connect();
 
     const body = await req.json();
     console.log("Received Clerk Webhook:", body);
 
     if (body.type === "user.created") {
+      const username = body.data.username || body.data.email_addresses[0]?.email_address || null;
+
       const userData = {
         clerkId: body.data.id,
         email: body.data.email_addresses[0]?.email_address || "",
-        username: body.data.username || "",
+        username,
         firstName: body.data.first_name || "",
         lastName: body.data.last_name || "",
         createdAt: new Date(),
