@@ -1,10 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useUser } from "@clerk/nextjs"; // 👈 add this
 
 export default function AddTodo() {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [todos, setTodos] = useState([]);
+
+  const { user } = useUser(); // 👈 get Clerk user
 
   const fetchTodos = async () => {
     try {
@@ -19,14 +22,17 @@ export default function AddTodo() {
   };
 
   const handleAddTodo = async () => {
-    if (!title.trim()) return;
+    if (!title.trim() || !user?.id) return;
 
     setLoading(true);
     try {
       const res = await fetch("/api/todos/add", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title }),
+        body: JSON.stringify({
+          title,
+          userId: user.id, // 👈 send userId
+        }),
       });
 
       const data = await res.json();
