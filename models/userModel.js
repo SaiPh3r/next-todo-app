@@ -9,7 +9,7 @@ const userSchema = new Schema({
     },
     username:{
         type:String,
-        required:true,
+        required:false,
         unique:true
     },
     createdAt:{
@@ -18,4 +18,4 @@ const userSchema = new Schema({
     }
 })
 
-export default mongoose.model("User",userSchema) || mongoose.model('users',userSchema)
+export const UserModel = mongoose.models.User || mongoose.model("User", userSchema);
